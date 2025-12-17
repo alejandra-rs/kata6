@@ -4,14 +4,17 @@ import software.ulpgc.kata6.architecture.io.Store;
 import software.ulpgc.kata6.architecture.model.Movie;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class DatabaseStore implements Store {
 
     private final Connection connection;
+    private final String baseQuery = "SELECT * FROM movies";
 
     public DatabaseStore(Connection connection) {
         this.connection = connection;
@@ -24,6 +27,10 @@ public class DatabaseStore implements Store {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Stream<Movie> moviesFilteredBy(String condition, Object... injections) throws SQLException {
+        return moviesIn(resultSetWith(condition, injections));
     }
 
     private Stream<Movie> moviesIn(ResultSet resultSet) {
@@ -57,6 +64,20 @@ public class DatabaseStore implements Store {
     }
 
     private ResultSet resultSet() throws SQLException {
-        return connection.createStatement().executeQuery("SELECT * FROM movies");
+        return connection.createStatement().executeQuery(baseQuery);
+    }
+
+    private ResultSet resultSetWith(String condition, Object[] injections) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(baseQuery + " WHERE " + condition);
+        IntStream.range(0, injections.length).forEach(i -> setIntoPreparedStatement(preparedStatement, i + 1, injections[i]));
+        return preparedStatement.executeQuery();
+    }
+
+    private void setIntoPreparedStatement(PreparedStatement preparedStatement, int i, Object injection) {
+        try {
+            preparedStatement.setObject(i, injection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

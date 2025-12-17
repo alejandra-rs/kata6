@@ -5,6 +5,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import software.ulpgc.kata6.app.lavender.InMemoryQuery;
 import software.ulpgc.kata6.architecture.io.Store;
 import software.ulpgc.kata6.architecture.viewmodel.Histogram;
 import software.ulpgc.kata6.architecture.model.Movie;
@@ -31,14 +32,8 @@ public class Desktop extends JFrame {
     }
 
     public Desktop display() {
-        display(histogramOf(movies()));
+        display(histogramOf(new InMemoryQuery(store).moviesReleasedBetween(1900, 2025)));
         return this;
-    }
-
-    private Stream<Movie> movies() {
-        return store.movies()
-                .filter(m -> m.year() >= 1900)
-                .filter(m -> m.year() <= 2025);
     }
 
     private static Histogram histogramOf(Stream<Movie> movies) {
