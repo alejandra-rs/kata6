@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    private static String database = "movies.db";
+    private final static String database = "movies.db";
 
     public static void main(String[] args) throws SQLException {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + database)) {

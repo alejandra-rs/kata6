@@ -61,8 +61,8 @@ public class DatabaseRecorder implements Recorder {
     }
 
     private void createIndexes() throws SQLException {
-        connection.createStatement().execute("CREATE INDEX IF NOT EXISTS year_index INTO movies(year)");
-        connection.createStatement().execute("CREATE INDEX IF NOT EXISTS duration_index INTO movies(duration)");
-        connection.createStatement().execute("CREATE INDEX IF NOT EXISTS title_index INTO movies(title)");
+        connection.createStatement().execute("CREATE INDEX IF NOT EXISTS year_index ON movies(year)");
+        connection.createStatement().execute("CREATE INDEX IF NOT EXISTS duration_index ON movies(duration)");
+        connection.createStatement().execute("CREATE INDEX IF NOT EXISTS title_index ON movies(title)");
     }
 }
